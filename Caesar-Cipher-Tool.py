@@ -46,3 +46,37 @@ class CaesarApp(ctk.CTk):
         # Result Display
         self.result_text = ctk.CTkTextbox(self, height=100, width=400, fg_color="#2b2b2b")
         self.result_text.pack(pady=20)
+
+        def update_shift_label(self, value):
+            """Updates the shift label when slider moves"""
+            self.shift_value_label.configure(text=f"Current Shift: {int(value)}")
+
+        def process_text(self, mode):
+            text = self.entry_text.get("0.0", "end-1c")
+            shift = int(self.shift_slider.get())
+            if mode == "decrypt":
+                shift = -shift
+
+            result = ""
+            for char in text:
+                if char.isalpha():
+                    # Handle Uppercase and Lowercase separately
+                    start = ord('A') if char.isupper() else ord('a')
+                    # The core Caesar math
+                    new_char = chr(start + (ord(char) - start + shift) % 26)
+                    result += new_char
+                else:
+                    result += char  # Leave spaces/punctuation as they are
+
+            self.result_text.delete("0.0", "end")
+            self.result_text.insert("0.0", result)
+
+        def encrypt(self):
+            self.process_text("encrypt")
+
+        def decrypt(self):
+            self.process_text("decrypt")
+
+    if __name__ == "__main__":
+        app = CaesarApp()
+        app.mainloop()
